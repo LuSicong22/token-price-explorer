@@ -1,6 +1,6 @@
 # 🪙 Token Price Explorer
 
-A React + Vite app for comparing token values from a USD amount. It now features a refined, Fun.xyz‑inspired minimalist design, responsive layout, and polished interactions.
+A React + Vite app for exploring and converting between different cryptocurrency tokens with real-time pricing. Features a refined, Fun.xyz‑inspired minimalist design, responsive layout, and interactive token conversion cards.
 
 🔗 **Live Demo**: [https://token-price-explorer-rosy.vercel.app/](https://token-price-explorer-rosy.vercel.app/)
 
@@ -8,14 +8,15 @@ A React + Vite app for comparing token values from a USD amount. It now features
 
 ## ✨ Features
 
-- 🔘 Select two tokens (source & target)
-- 💰 Enter USD amount, get precise token amounts
-- 📉 Live exchange rate between selected tokens
+- 🔘 Select two tokens (source & target) from supported list
+- ✏️ **Editable token cards** - input either token amount or USD value directly in each card
+- 💱 **Two-way conversion** - change any field and all others update automatically
+- 📊 **Real-time API pricing** - each token's USD value calculated independently from live data
 - 🔁 Modern swap button with gradient border and color‑coded arrows (blue/pink)
 - 🧱 Responsive layout with grid; auto switches to vertical stack on small screens
 - ↕️ Swap button auto-rotates 90° when cards stack vertically
-- 📱 Mobile‑first fixes using `svh` and media queries; default no scrollbars on desktop but scrolls when needed
-- 🧩 Consistent card heights; app card uses a minimum height to prevent layout jump
+- 📱 Mobile‑first design using `svh` and media queries
+- 🧩 Optimized card sizing with no excess whitespace
 - ⚠️ Clear loading, error, and disabled states
 
 ---
@@ -53,16 +54,17 @@ This key is used to fetch token metadata and live prices from the Funkit API.
 
 ---
 
-## 🧠 Assumptions & Design Notes
+## 🧠 Key Features & Design Notes
 
-- 🔒 Only four tokens are supported (USDC, USDT, ETH, WBTC) for simplicity
+- 🔒 **Four supported tokens**: USDC, USDT, ETH, WBTC
 - ❌ Same token cannot be selected for both source and target
 - 🎯 Selecting the same token again resets the pair
-- 🔁 Swap button reverses source/target instantly
-- 💡 Token addresses and pricing are dynamically fetched via `getAssetErc20ByChainAndSymbol()` and `getAssetPriceInfo()`
-- 🧭 App card has `min-height: 580px`; prevents ExchangeRate from stretching the card
-- 🧱 Token cards use fixed size to avoid layout shift between states
-- 🔁 Grid layout centers cards on desktop; when viewport is narrow the grid stacks (1 column) and the swap button rotates vertically
+- 🔁 **Swap button** reverses source/target instantly
+- 💡 **Live API pricing**: Token addresses and pricing fetched dynamically
+- ✏️ **Editable fields**: Both token amount and USD value can be edited in each card
+- 🔄 **Smart syncing**: Changes in any field automatically update all related values
+- 🎨 **Clean UI**: Removed separate USD input section for streamlined experience
+- 📱 **Responsive design**: Grid layout centers cards on desktop, stacks vertically on mobile
 
 ---
 
