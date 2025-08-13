@@ -1,5 +1,7 @@
 import Skeleton from "./Skeleton";
 
+// Convert a hex color to RGBA with a specific alpha value.
+// Used to tint the token card background using the card's labelColor.
 function hexToRgba(hex, alpha) {
   const sanitized = hex.replace("#", "");
   const bigint = parseInt(sanitized, 16);
@@ -9,6 +11,9 @@ function hexToRgba(hex, alpha) {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
+// Stateless presentational component for a single token card.
+// - When editable=true it renders two inputs (token amount and USD)
+// - Otherwise it renders a read-only view
 export default function TokenCard({
   token,
   usdAmount,
@@ -40,7 +45,7 @@ export default function TokenCard({
         cursor: "default",
       }}
     >
-      
+      {/* Content area */}
       <div style={{ textAlign: "left", marginTop: 12 }}>
         {loading ? (
           <Skeleton width="120px" />
@@ -49,7 +54,9 @@ export default function TokenCard({
         ) : token ? (
           <>
             {editable ? (
+              // Editable mode: token amount row, separator, USD row
               <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                {/* Token amount row */}
                 <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                   <input
                     type="number"
@@ -74,7 +81,9 @@ export default function TokenCard({
                   />
                   <span style={{ fontSize: 14, fontWeight: "500", color: "#333" }}>{token.symbol}</span>
                 </div>
+                {/* Approximate sign separator */}
                 <div style={{ display: "flex", justifyContent: "center", color: "#666", fontSize: 14 }}>≈</div>
+                {/* USD row */}
                 <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                   <span style={{ fontSize: 14, fontWeight: "500", color: "#333" }}>$</span>
                   <input
@@ -96,6 +105,7 @@ export default function TokenCard({
                 </div>
               </div>
             ) : (
+              // Read-only mode
               <>
                 <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
                   <span style={{ fontSize: 18, fontWeight: "700", color: "#000" }}>{amount}</span>

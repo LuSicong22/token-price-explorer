@@ -31,6 +31,10 @@ const tokens = [
   },
 ];
 
+// App is the single stateful container responsible for:
+// - Managing selected tokens, their live USD unit prices, and user-entered amounts
+// - Converting between token amounts and USD using API prices
+// - Keeping both cards in sync while preserving UX (no flicker while typing)
 export default function App() {
   const [usdAmount, setUsdAmount] = useState(0);
   const [sourceToken, setSourceToken] = useState(null);
@@ -45,6 +49,9 @@ export default function App() {
   const [error, setError] = useState(false);
   const [skipSourceInitOnSwap, setSkipSourceInitOnSwap] = useState(false);
 
+  // Fetch USD unit price for the left (source) token whenever it changes.
+  // By default we initialize to 1 unit and its USD value, except during a swap
+  // where we purposely keep the user-entered amounts intact.
   useEffect(() => {
     const style = document.createElement("style");
     style.innerHTML = `
@@ -96,8 +103,9 @@ export default function App() {
     fetchSourcePrice();
   }, [sourceToken]);
 
-  // Fetch target token price ONLY when target token changes to avoid
-  // showing skeleton while typing USD/amount.
+  // Fetch USD unit price for the right (target) token when it changes.
+  // We avoid fetching on every keystroke so the right card does not flicker
+  // into a loading state while users are editing values.
   useEffect(() => {
     async function fetchTargetPrice() {
       if (!targetToken) return;
@@ -128,8 +136,9 @@ export default function App() {
     fetchTargetPrice();
   }, [targetToken]);
 
-  // Recompute derived amounts/rates when inputs or prices change, without fetching
-  // or toggling loading states.
+  // Recompute derived amounts/rates whenever relevant inputs or prices change.
+  // This effect is purely computational – it does not trigger network calls or
+  // loading states to keep the UI responsive during typing.
   useEffect(() => {
     if (!sourceToken || !targetToken) return;
     if (!sourcePrice || !targetPrice) return;
@@ -139,6 +148,7 @@ export default function App() {
     setRateValue((sourcePrice / targetPrice).toFixed(6));
   }, [usdAmount, sourceToken, targetToken, sourcePrice, targetPrice]);
 
+  // Handle token button clicks in the selector.
   const handleSelectToken = (t) => {
     if (!sourceToken && !targetToken) {
       setSourceToken(t);
@@ -152,6 +162,7 @@ export default function App() {
     }
   };
 
+  // Swap left/right tokens and amounts while preserving user-entered values.
   const handleSwap = () => {
     if (sourceToken && targetToken) {
       // Prevent source init effect from resetting to 1
@@ -183,7 +194,9 @@ export default function App() {
     return str;
   };
 
-  // Derived USD values for display based on API prices for each card.
+  // Derived USD values for display for each card based on its token amount
+  // and that token's API price. This guarantees each card reflects its own
+  // authoritative price instead of mirroring another card.
   const sourceUsdDisplay =
     sourcePrice && sourceAmount !== ""
       ? parseFloat(sourceAmount || 0) * sourcePrice
@@ -193,6 +206,8 @@ export default function App() {
       ? parseFloat(targetAmount || 0) * targetPrice
       : usdAmount || 0;
 
+  // User edited the USD field on the left (source) card.
+  // We recompute both the source and target token amounts from this USD value.
   const handleSourceUsdChange = (nextUsd) => {
     if (!sourcePrice) return;
     const numericUsd = Number(nextUsd);
@@ -212,6 +227,7 @@ export default function App() {
     }
   };
 
+  // User edited the source token amount. We recompute USD, then target amount.
   const handleSourceAmountChange = (nextAmountStr) => {
     if (!sourcePrice) return;
     // Allow empty input
@@ -233,6 +249,8 @@ export default function App() {
     }
   };
 
+  // User edited the USD field on the right (target) card.
+  // We recompute both the target and source token amounts from this USD value.
   const handleTargetUsdChange = (nextUsd) => {
     if (!targetPrice) return;
     const numericUsd = Number(nextUsd);
@@ -252,6 +270,7 @@ export default function App() {
     }
   };
 
+  // User edited the target token amount. We recompute USD, then source amount.
   const handleTargetAmountChange = (nextAmountStr) => {
     if (!targetPrice) return;
     // Allow empty input
