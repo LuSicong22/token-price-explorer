@@ -4,7 +4,6 @@ import {
   getAssetPriceInfo,
 } from "@funkit/api-base";
 import TokenCard from "./components/TokenCard";
-import ExchangeRate from "./components/ExchangeRate";
 import TokenSelector from "./components/TokenSelector";
 
 const API_KEY = import.meta.env.VITE_FUNKIT_API_KEY;
@@ -33,7 +32,7 @@ const tokens = [
 ];
 
 export default function App() {
-  const [usdAmount, setUsdAmount] = useState(100);
+  const [usdAmount, setUsdAmount] = useState(0);
   const [sourceToken, setSourceToken] = useState(null);
   const [targetToken, setTargetToken] = useState(null);
   const [sourceAmount, setSourceAmount] = useState("");
@@ -60,7 +59,7 @@ export default function App() {
 
   useEffect(() => {
     async function fetchSourcePrice() {
-      if (!usdAmount || isNaN(usdAmount) || !sourceToken) return;
+      if (!sourceToken) return;
       setLoadingSource(true);
       setError(false);
       try {
@@ -78,7 +77,9 @@ export default function App() {
         const price = parseFloat(res?.unitPrice ?? res?.price);
         if (isNaN(price)) throw new Error("Invalid price");
         setSourcePrice(price);
-        setSourceAmount((usdAmount / price).toFixed(6));
+        // Default to 1 token ≈ $price when a token is selected
+        setSourceAmount("1");
+        setUsdAmount(price);
       } catch (err) {
         setError(true);
         setSourcePrice(null);
@@ -88,12 +89,13 @@ export default function App() {
       }
     }
     fetchSourcePrice();
-  }, [usdAmount, sourceToken]);
+  }, [sourceToken]);
 
+  // Fetch target token price ONLY when target token changes to avoid
+  // showing skeleton while typing USD/amount.
   useEffect(() => {
-    async function fetchTargetPriceAndRate() {
-      if (!usdAmount || isNaN(usdAmount)) return;
-      if (!sourceToken || !sourcePrice || !targetToken) return;
+    async function fetchTargetPrice() {
+      if (!targetToken) return;
       setLoadingTarget(true);
       setError(false);
       try {
@@ -111,19 +113,26 @@ export default function App() {
         const price = parseFloat(res?.unitPrice ?? res?.price);
         if (isNaN(price)) throw new Error("Invalid price");
         setTargetPrice(price);
-        setTargetAmount((usdAmount / price).toFixed(6));
-        setRateValue((sourcePrice / price).toFixed(6));
       } catch (err) {
         setError(true);
         setTargetPrice(null);
-        setTargetAmount("");
-        setRateValue("");
       } finally {
         setLoadingTarget(false);
       }
     }
-    fetchTargetPriceAndRate();
-  }, [usdAmount, sourceToken, sourcePrice, targetToken]);
+    fetchTargetPrice();
+  }, [targetToken]);
+
+  // Recompute derived amounts/rates when inputs or prices change, without fetching
+  // or toggling loading states.
+  useEffect(() => {
+    if (!sourceToken || !targetToken) return;
+    if (!sourcePrice || !targetPrice) return;
+    if (usdAmount && !isNaN(usdAmount)) {
+      setTargetAmount((usdAmount / targetPrice).toFixed(2));
+    }
+    setRateValue((sourcePrice / targetPrice).toFixed(6));
+  }, [usdAmount, sourceToken, targetToken, sourcePrice, targetPrice]);
 
   const handleSelectToken = (t) => {
     if (!sourceToken && !targetToken) {
@@ -147,6 +156,96 @@ export default function App() {
 
   const canSwap = Boolean(sourceToken && targetToken);
 
+  // Derived USD values for display based on API prices for each card.
+  const sourceUsdDisplay =
+    sourcePrice && sourceAmount !== ""
+      ? parseFloat(sourceAmount || 0) * sourcePrice
+      : usdAmount || 0;
+  const targetUsdDisplay =
+    targetPrice && targetAmount !== ""
+      ? parseFloat(targetAmount || 0) * targetPrice
+      : usdAmount || 0;
+
+  const handleSourceUsdChange = (nextUsd) => {
+    if (!sourcePrice) return;
+    const numericUsd = Number(nextUsd);
+    if (isNaN(numericUsd)) return;
+    setUsdAmount(numericUsd);
+    if (numericUsd <= 0) {
+      setSourceAmount("");
+      setTargetAmount("");
+      return;
+    }
+    const nextAmount = (numericUsd / sourcePrice).toFixed(2);
+    setSourceAmount(nextAmount);
+    // Update target amount based on new USD value
+    if (targetPrice) {
+      const nextTargetAmount = (numericUsd / targetPrice).toFixed(2);
+      setTargetAmount(nextTargetAmount);
+    }
+  };
+
+  const handleSourceAmountChange = (nextAmountStr) => {
+    if (!sourcePrice) return;
+    // Allow empty input
+    if (nextAmountStr === "") {
+      setSourceAmount("");
+      setUsdAmount(0);
+      setTargetAmount("");
+      return;
+    }
+    const numericAmount = parseFloat(nextAmountStr);
+    if (isNaN(numericAmount)) return;
+    setSourceAmount(nextAmountStr);
+    const nextUsd = numericAmount * sourcePrice;
+    setUsdAmount(nextUsd);
+    // Update target amount based on new USD value
+    if (targetPrice) {
+      const nextTargetAmount = (nextUsd / targetPrice).toFixed(2);
+      setTargetAmount(nextTargetAmount);
+    }
+  };
+
+  const handleTargetUsdChange = (nextUsd) => {
+    if (!targetPrice) return;
+    const numericUsd = Number(nextUsd);
+    if (isNaN(numericUsd)) return;
+    setUsdAmount(numericUsd);
+    if (numericUsd <= 0) {
+      setTargetAmount("");
+      setSourceAmount("");
+      return;
+    }
+    const nextAmount = (numericUsd / targetPrice).toFixed(2);
+    setTargetAmount(nextAmount);
+    // Update source amount based on new USD value immediately
+    if (sourcePrice) {
+      const nextSourceAmount = (numericUsd / sourcePrice).toFixed(2);
+      setSourceAmount(nextSourceAmount);
+    }
+  };
+
+  const handleTargetAmountChange = (nextAmountStr) => {
+    if (!targetPrice) return;
+    // Allow empty input
+    if (nextAmountStr === "") {
+      setTargetAmount("");
+      setUsdAmount(0);
+      setSourceAmount("");
+      return;
+    }
+    const numericAmount = parseFloat(nextAmountStr);
+    if (isNaN(numericAmount)) return;
+    setTargetAmount(nextAmountStr);
+    const nextUsd = numericAmount * targetPrice;
+    setUsdAmount(nextUsd);
+    // Update source amount based on new USD value immediately
+    if (sourcePrice) {
+      const nextSourceAmount = (nextUsd / sourcePrice).toFixed(2);
+      setSourceAmount(nextSourceAmount);
+    }
+  };
+
   return (
     <div
       style={{
@@ -163,12 +262,12 @@ export default function App() {
         className="app-card"
         style={{
           width: "100%",
-          maxWidth: 760,
+          maxWidth: 820,
           backgroundColor: "#ffffff",
           padding: 32,
           borderRadius: 8,
           boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
-          minHeight: 590,
+          minHeight: 460,
           border: "1px solid #e5e5e5",
         }}
       >
@@ -177,7 +276,7 @@ export default function App() {
             textAlign: "center",
             fontSize: 32,
             fontWeight: "600",
-            marginBottom: 8,
+            marginBottom: 36,
             background: "linear-gradient(to right, #1976d2, #c2185b)",
             WebkitBackgroundClip: "text",
             WebkitTextFillColor: "transparent",
@@ -186,44 +285,8 @@ export default function App() {
         >
           Token Price Explorer
         </h1>
-        <p
-          style={{
-            textAlign: "center",
-            color: "#666666",
-            marginTop: 0,
-            fontSize: 16,
-          }}
-        >
-          Enter an amount in USD and select two tokens to compare.
-        </p>
+    
 
-        <div style={{ marginTop: 24, marginBottom: 24 }}>
-          <label
-            style={{
-              fontWeight: "500",
-              color: "#000000",
-              fontSize: 14,
-              marginBottom: 8,
-              display: "block",
-            }}
-          >
-            Enter USD Amount:
-          </label>
-          <input
-            type="number"
-            value={usdAmount}
-            onChange={(e) => setUsdAmount(Number(e.target.value))}
-            style={{
-              width: "100%",
-              padding: 12,
-              borderRadius: 6,
-              border: "1px solid #e5e5e5",
-              fontSize: 16,
-              backgroundColor: "#ffffff",
-              color: "#000000",
-            }}
-          />
-        </div>
 
         <TokenSelector
           tokens={tokens}
@@ -243,10 +306,13 @@ export default function App() {
           <div className="grid-left">
             <TokenCard
               token={sourceToken}
-              usdAmount={usdAmount}
+              usdAmount={sourceUsdDisplay}
               amount={sourceAmount}
               loading={loadingSource}
               error={error}
+              editable
+              onUsdChange={handleSourceUsdChange}
+              onAmountChange={handleSourceAmountChange}
               labelColor="#90caf9"
             />
           </div>
@@ -294,23 +360,16 @@ export default function App() {
           <div className="grid-right">
             <TokenCard
               token={targetToken}
-              usdAmount={usdAmount}
+              usdAmount={targetUsdDisplay}
               amount={targetAmount}
               loading={loadingTarget}
               error={error}
+              editable
+              onUsdChange={handleTargetUsdChange}
+              onAmountChange={handleTargetAmountChange}
               labelColor="#f48fb1"
             />
           </div>
-        </div>
-
-        <div style={{ marginTop: 16 }}>
-          <ExchangeRate
-            loading={loadingTarget}
-            error={error}
-            sourceToken={sourceToken}
-            targetToken={targetToken}
-            rateValue={rateValue}
-          />
         </div>
       </div>
     </div>

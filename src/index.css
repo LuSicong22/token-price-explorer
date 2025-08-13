@@ -106,3 +106,15 @@ button, a { -webkit-tap-highlight-color: transparent; }
     background-color: #ffffff;
   }
 }
+
+/* Remove number input spinners (arrows) in all browsers */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+  -webkit-appearance: none; /* Safari */
+}
