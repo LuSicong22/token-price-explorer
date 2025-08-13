@@ -8,15 +8,15 @@ A React + Vite app for exploring and converting between different cryptocurrency
 
 ## ✨ Features
 
-- 🔘 Select two tokens (source & target) from supported list
-- ✏️ **Editable token cards** - input either token amount or USD value directly in each card
-- 💱 **Two-way conversion** - change any field and all others update automatically
-- 📊 **Real-time API pricing** - each token's USD value calculated independently from live data
-- 🔁 Modern swap button with gradient border and color‑coded arrows (blue/pink)
-- 🧱 Responsive layout with grid; auto switches to vertical stack on small screens
-- ↕️ Swap button auto-rotates 90° when cards stack vertically
-- 📱 Mobile‑first design using `svh` and media queries
-- 🧩 Optimized card sizing with no excess whitespace
+- 🔘 Choose a source and target token from a centered selector (Reset on the right)
+- ✏️ Edit either the token amount or USD value on both cards
+- 💱 Instant two‑way conversion with smart syncing across fields
+- 📊 Live prices via Funkit API; each card computes USD from its own price
+- 🔁 Gradient swap button with blue/pink arrows
+- 🏷️ FROM/TO badges for clear context
+- ⏳ Two‑line loading skeletons sized like the inputs (stable layout)
+- 🧱 Responsive grid; stacks on small screens and rotates the swap icon
+- 🎨 Cohesive web3 look: gradient title, glassy cards, aurora backdrop
 - ⚠️ Clear loading, error, and disabled states
 
 ---
@@ -54,17 +54,11 @@ This key is used to fetch token metadata and live prices from the Funkit API.
 
 ---
 
-## 🧠 Key Features & Design Notes
+## 🧠 Notes
 
-- 🔒 **Four supported tokens**: USDC, USDT, ETH, WBTC
-- ❌ Same token cannot be selected for both source and target
-- 🎯 Selecting the same token again resets the pair
-- 🔁 **Swap button** reverses source/target instantly
-- 💡 **Live API pricing**: Token addresses and pricing fetched dynamically
-- ✏️ **Editable fields**: Both token amount and USD value can be edited in each card
-- 🔄 **Smart syncing**: Changes in any field automatically update all related values
-- 🎨 **Clean UI**: Removed separate USD input section for streamlined experience
-- 📱 **Responsive design**: Grid layout centers cards on desktop, stacks vertically on mobile
+- Supports USDC, USDT, ETH, and WBTC
+- Same token cannot be selected for both sides; selecting the same token again resets the pair
+- Swap reverses sides while preserving values
 
 ---
 
