@@ -72,6 +72,15 @@ body {
 .cards-grid { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; column-gap: 16px; width: 100%; }
 .grid-left { justify-self: start; }
 .grid-right { justify-self: end; }
+/* Brief pulse on swap */
+.cards-grid.swapping .token-card {
+  animation: swapPulse 450ms ease-in-out;
+}
+@keyframes swapPulse {
+  0% { transform: scale(1); box-shadow: 0 8px 24px rgba(0,0,0,0.06); }
+  50% { transform: scale(0.98); box-shadow: 0 6px 18px rgba(0,0,0,0.08); }
+  100% { transform: scale(1); box-shadow: 0 8px 24px rgba(0,0,0,0.06); }
+}
 @media (max-width: 768px) {
   .cards-grid { grid-template-columns: 1fr; row-gap: 12px; }
   .grid-left, .grid-right { justify-self: center; }
@@ -158,6 +167,32 @@ input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
+}
+
+/* Swap button click effects */
+.swap-btn {
+  position: relative;
+  overflow: hidden;
+}
+.swap-btn.is-swapping svg {
+  animation: spinSwap 450ms ease-in-out;
+}
+@keyframes spinSwap {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(180deg); }
+}
+.swap-btn.is-swapping::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle at center, rgba(25,118,210,0.2), transparent 60%);
+  animation: ripple 450ms ease-out;
+  pointer-events: none;
+}
+@keyframes ripple {
+  from { transform: scale(0.8); opacity: 0.6; }
+  to { transform: scale(1.2); opacity: 0; }
 }
 input[type="number"] {
   -moz-appearance: textfield;

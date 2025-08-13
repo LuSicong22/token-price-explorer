@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   getAssetErc20ByChainAndSymbol,
   getAssetPriceInfo,
@@ -48,6 +48,8 @@ export default function App() {
   const [loadingTarget, setLoadingTarget] = useState(false);
   const [error, setError] = useState(false);
   const [skipSourceInitOnSwap, setSkipSourceInitOnSwap] = useState(false);
+  const [swapping, setSwapping] = useState(false);
+  const swapAnimTimeoutRef = useRef(null);
 
   // Fetch USD unit price for the left (source) token whenever it changes.
   // By default we initialize to 1 unit and its USD value, except during a swap
@@ -63,6 +65,15 @@ export default function App() {
     `;
     document.head.appendChild(style);
     return () => document.head.removeChild(style);
+  }, []);
+
+  // Cleanup any pending swap animation timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (swapAnimTimeoutRef.current) {
+        clearTimeout(swapAnimTimeoutRef.current);
+      }
+    };
   }, []);
 
   useEffect(() => {
@@ -164,19 +175,23 @@ export default function App() {
 
   // Swap left/right tokens and amounts while preserving user-entered values.
   const handleSwap = () => {
-    if (sourceToken && targetToken) {
-      // Prevent source init effect from resetting to 1
-      setSkipSourceInitOnSwap(true);
-      // Swap tokens
-      setSourceToken(targetToken);
-      setTargetToken(sourceToken);
-      // Swap amounts
-      setSourceAmount(targetAmount);
-      setTargetAmount(sourceAmount);
-      // Swap prices to avoid transient blanks while refetching
-      setSourcePrice(targetPrice);
-      setTargetPrice(sourcePrice);
-    }
+    if (!sourceToken || !targetToken) return;
+    // Trigger quick UI feedback
+    setSwapping(true);
+    if (swapAnimTimeoutRef.current) clearTimeout(swapAnimTimeoutRef.current);
+    swapAnimTimeoutRef.current = setTimeout(() => setSwapping(false), 500);
+
+    // Prevent source init effect from resetting to 1
+    setSkipSourceInitOnSwap(true);
+    // Swap tokens
+    setSourceToken(targetToken);
+    setTargetToken(sourceToken);
+    // Swap amounts
+    setSourceAmount(targetAmount);
+    setTargetAmount(sourceAmount);
+    // Swap prices to avoid transient blanks while refetching
+    setSourcePrice(targetPrice);
+    setTargetPrice(sourcePrice);
   };
 
   const canSwap = Boolean(sourceToken && targetToken);
@@ -337,7 +352,7 @@ export default function App() {
           }}
         />
 
-        <div className="cards-grid">
+        <div className={`cards-grid ${swapping ? "swapping" : ""}`}>
           <div className="grid-left">
             <TokenCard
               token={sourceToken}
@@ -354,7 +369,7 @@ export default function App() {
             />
           </div>
           <button
-            className="swap-btn"
+            className={`swap-btn ${swapping ? "is-swapping" : ""}`}
             onClick={handleSwap}
             disabled={!canSwap}
             style={{
