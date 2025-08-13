@@ -293,43 +293,32 @@ export default function App() {
   };
 
   return (
-    <div
-      style={{
-        width: "100%",
-        minHeight: "100svh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        background: "linear-gradient(to right, #e3f2fd, #fce4ec)",
-        padding: 0,
-      }}
-    >
+    <div className="app-shell">
       <div
         className="app-card"
         style={{
           width: "100%",
           maxWidth: 820,
-          backgroundColor: "#ffffff",
+          background: "linear-gradient(#ffffff, #ffffff) padding-box, linear-gradient(135deg, #90caf9, #f48fb1) border-box",
           padding: 32,
-          borderRadius: 8,
-          boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+          borderRadius: 16,
+          boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
           minHeight: 460,
-          border: "1px solid #e5e5e5",
+          border: "1px solid transparent",
+          backdropFilter: "saturate(180%) blur(10px)",
         }}
       >
         <h1
+          className="app-title"
           style={{
             textAlign: "center",
             fontSize: 32,
-            fontWeight: "600",
+            fontWeight: "700",
             marginBottom: 36,
-            background: "linear-gradient(to right, #1976d2, #c2185b)",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-            backgroundClip: "text",
+            letterSpacing: 0.2,
           }}
         >
-          Token Price Explorer
+          <span className="gradient-text">Token Price Explorer</span>
         </h1>
     
 
