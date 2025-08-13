@@ -129,7 +129,7 @@ export default function App() {
     if (!sourceToken || !targetToken) return;
     if (!sourcePrice || !targetPrice) return;
     if (usdAmount && !isNaN(usdAmount)) {
-      setTargetAmount((usdAmount / targetPrice).toFixed(2));
+      setTargetAmount(formatTokenAmount(usdAmount / targetPrice));
     }
     setRateValue((sourcePrice / targetPrice).toFixed(6));
   }, [usdAmount, sourceToken, targetToken, sourcePrice, targetPrice]);
@@ -156,6 +156,19 @@ export default function App() {
 
   const canSwap = Boolean(sourceToken && targetToken);
 
+  // Format token amount dynamically
+  const formatTokenAmount = (value) => {
+    const num = Number(value);
+    if (!Number.isFinite(num)) return "";
+    const decimals = Math.abs(num) >= 1 ? 2 : 8;
+    let str = num.toFixed(decimals);
+    str = str.replace(/\.0+$/, "");
+    str = str.replace(/(\.\d*?[1-9])0+$/, "$1");
+    str = str.replace(/\.$/, "");
+    if (str === "-0") return "0";
+    return str;
+  };
+
   // Derived USD values for display based on API prices for each card.
   const sourceUsdDisplay =
     sourcePrice && sourceAmount !== ""
@@ -176,12 +189,12 @@ export default function App() {
       setTargetAmount("");
       return;
     }
-    const nextAmount = (numericUsd / sourcePrice).toFixed(2);
-    setSourceAmount(nextAmount);
+    const nextAmount = numericUsd / sourcePrice;
+    setSourceAmount(formatTokenAmount(nextAmount));
     // Update target amount based on new USD value
     if (targetPrice) {
-      const nextTargetAmount = (numericUsd / targetPrice).toFixed(2);
-      setTargetAmount(nextTargetAmount);
+      const nextTargetAmount = numericUsd / targetPrice;
+      setTargetAmount(formatTokenAmount(nextTargetAmount));
     }
   };
 
@@ -216,8 +229,8 @@ export default function App() {
       setSourceAmount("");
       return;
     }
-    const nextAmount = (numericUsd / targetPrice).toFixed(2);
-    setTargetAmount(nextAmount);
+    const nextAmount = numericUsd / targetPrice;
+    setTargetAmount(formatTokenAmount(nextAmount));
     // Update source amount based on new USD value immediately
     if (sourcePrice) {
       const nextSourceAmount = (numericUsd / sourcePrice).toFixed(2);
