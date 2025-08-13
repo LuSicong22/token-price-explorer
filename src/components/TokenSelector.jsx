@@ -15,12 +15,12 @@ export default function TokenSelector({
         {tokens.map((t) => {
           const isSource = sourceToken?.symbol === t.symbol;
           const isTarget = targetToken?.symbol === t.symbol;
-          const borderBase = isSource ? "#1976d2" : isTarget ? "#c2185b" : "#ccc";
+          const borderBase = isSource ? "#90caf9" : isTarget ? "#f48fb1" : "#e5e5e5";
           const ringColor = isSource ? "#90caf9" : isTarget ? "#f48fb1" : "transparent";
           const backgroundTint = isSource
-            ? "rgba(25, 118, 210, 0.10)"
+            ? "rgba(144, 202, 249, 0.16)"
             : isTarget
-            ? "rgba(194, 24, 91, 0.10)"
+            ? "rgba(244, 143, 177, 0.16)"
             : "#ffffff";
 
           return (
