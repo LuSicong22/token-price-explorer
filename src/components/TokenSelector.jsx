@@ -13,22 +13,25 @@ export default function TokenSelector({
         style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 8 }}
       >
         {tokens.map((t) => {
-          const borderColor =
-            sourceToken?.symbol === t.symbol
-              ? "#90caf9"
-              : targetToken?.symbol === t.symbol
-              ? "#f48fb1"
-              : "#ccc";
+          const isSource = sourceToken?.symbol === t.symbol;
+          const isTarget = targetToken?.symbol === t.symbol;
+          const borderBase = isSource ? "#1976d2" : isTarget ? "#c2185b" : "#ccc";
+          const ringColor = isSource ? "#90caf9" : isTarget ? "#f48fb1" : "transparent";
+          const backgroundTint = isSource
+            ? "rgba(25, 118, 210, 0.08)"
+            : isTarget
+            ? "rgba(194, 24, 91, 0.08)"
+            : "#ffffff";
 
           return (
             <button
               key={t.symbol}
               onClick={() => onSelect(t)}
                           style={{
-              padding: "10px 16px",
-              borderRadius: 6,
-              border: `1px solid ${borderColor}`,
-              backgroundColor: "#ffffff",
+              padding: "12px 18px",
+              borderRadius: 8,
+              border: `${isSource || isTarget ? 2 : 1}px solid ${borderBase}`,
+              backgroundColor: backgroundTint,
               display: "flex",
               alignItems: "center",
               gap: 8,
@@ -37,6 +40,9 @@ export default function TokenSelector({
               fontWeight: "500",
               color: "#000000",
               transition: "all 0.2s ease",
+              position: "relative",
+              boxShadow: (isSource || isTarget) ? `0 0 0 3px ${ringColor}33` : "none",
+              transform: (isSource || isTarget) ? "translateY(-1px)" : "none",
             }}
             >
               <img

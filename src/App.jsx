@@ -360,6 +360,8 @@ export default function App() {
               onUsdChange={handleSourceUsdChange}
               onAmountChange={handleSourceAmountChange}
               labelColor="#90caf9"
+              cornerLabel={sourceToken ? "FROM" : undefined}
+              cornerColor="#1976d2"
             />
           </div>
           <button
@@ -414,6 +416,8 @@ export default function App() {
               onUsdChange={handleTargetUsdChange}
               onAmountChange={handleTargetAmountChange}
               labelColor="#f48fb1"
+              cornerLabel={targetToken ? "TO" : undefined}
+              cornerColor="#c2185b"
             />
           </div>
         </div>

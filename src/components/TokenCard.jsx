@@ -26,6 +26,8 @@ export default function TokenCard({
   onAmountChange,
   onUsdBlur,
   onAmountBlur,
+  cornerLabel,
+  cornerColor,
 }) {
   return (
     <div
@@ -43,8 +45,28 @@ export default function TokenCard({
         justifyContent: "flex-start",
         boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
         cursor: "default",
+        position: "relative",
       }}
     >
+      {cornerLabel && (
+        <span
+          style={{
+            position: "absolute",
+            top: 8,
+            left: 8,
+            backgroundColor: cornerColor || labelColor,
+            color: "#ffffff",
+            borderRadius: 9999,
+            fontSize: 10,
+            fontWeight: 700,
+            letterSpacing: 0.2,
+            padding: "2px 6px",
+            boxShadow: "0 2px 6px rgba(0,0,0,0.12)",
+          }}
+        >
+          {cornerLabel}
+        </span>
+      )}
       {/* Content area */}
       <div style={{ textAlign: "left", marginTop: 12 }}>
         {loading ? (
