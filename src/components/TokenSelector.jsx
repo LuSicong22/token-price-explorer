@@ -6,13 +6,13 @@ export default function TokenSelector({
   onReset,
 }) {
   return (
-            <div style={{ marginBottom: 24 }}>
-          <label style={{ fontWeight: "500", fontSize: 14, color: "#000000", marginBottom: 8, display: "block" }}>Select Tokens:</label>
-      <div
-        className="token-buttons"
-        style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 8 }}
-      >
-        {tokens.map((t) => {
+            <div style={{ marginBottom: 24, display: "grid", gridTemplateColumns: "1fr auto 1fr", alignItems: "center", columnGap: 12 }}>
+      <div style={{ gridColumn: 2 }}>
+        <div
+          className="token-buttons"
+          style={{ display: "flex", flexWrap: "wrap", gap: 8, justifyContent: "center" }}
+        >
+          {tokens.map((t) => {
           const isSource = sourceToken?.symbol === t.symbol;
           const isTarget = targetToken?.symbol === t.symbol;
           const borderBase = isSource ? "#90caf9" : isTarget ? "#f48fb1" : "#e5e5e5";
@@ -54,21 +54,24 @@ export default function TokenSelector({
             </button>
           );
         })}
-        <button
-          onClick={onReset}
-          style={{
-            background: "transparent",
-            border: "none",
-            color: "#666666",
-            cursor: "pointer",
-            textDecoration: "underline",
-            fontSize: 14,
-            fontWeight: "500",
-          }}
-        >
-          Reset
-        </button>
+        </div>
       </div>
+      <div style={{ gridColumn: 3, justifySelf: "end" }}>
+          <button
+            onClick={onReset}
+            style={{
+              background: "transparent",
+              border: "none",
+              color: "#666666",
+              cursor: "pointer",
+              textDecoration: "underline",
+              fontSize: 14,
+              fontWeight: "500",
+            }}
+          >
+            Reset
+          </button>
+        </div>
     </div>
   );
 }
