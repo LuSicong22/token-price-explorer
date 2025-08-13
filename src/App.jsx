@@ -43,6 +43,7 @@ export default function App() {
   const [loadingSource, setLoadingSource] = useState(false);
   const [loadingTarget, setLoadingTarget] = useState(false);
   const [error, setError] = useState(false);
+  const [skipSourceInitOnSwap, setSkipSourceInitOnSwap] = useState(false);
 
   useEffect(() => {
     const style = document.createElement("style");
@@ -77,15 +78,19 @@ export default function App() {
         const price = parseFloat(res?.unitPrice ?? res?.price);
         if (isNaN(price)) throw new Error("Invalid price");
         setSourcePrice(price);
-        // Default to 1 token ≈ $price when a token is selected
-        setSourceAmount("1");
-        setUsdAmount(price);
+        // If this source token change comes from a normal select, initialize default
+        // If it comes from a swap, preserve the existing amounts/values
+        if (!skipSourceInitOnSwap) {
+          setSourceAmount("1");
+          setUsdAmount(price);
+        }
       } catch (err) {
         setError(true);
         setSourcePrice(null);
         setSourceAmount("");
       } finally {
         setLoadingSource(false);
+        if (skipSourceInitOnSwap) setSkipSourceInitOnSwap(false);
       }
     }
     fetchSourcePrice();
@@ -149,8 +154,17 @@ export default function App() {
 
   const handleSwap = () => {
     if (sourceToken && targetToken) {
+      // Prevent source init effect from resetting to 1
+      setSkipSourceInitOnSwap(true);
+      // Swap tokens
       setSourceToken(targetToken);
       setTargetToken(sourceToken);
+      // Swap amounts
+      setSourceAmount(targetAmount);
+      setTargetAmount(sourceAmount);
+      // Swap prices to avoid transient blanks while refetching
+      setSourcePrice(targetPrice);
+      setTargetPrice(sourcePrice);
     }
   };
 
