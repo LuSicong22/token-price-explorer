@@ -68,7 +68,7 @@ export default function TokenCard({
         </span>
       )}
       {/* Content area */}
-      <div style={{ textAlign: "left", marginTop: 12 }}>
+      <div style={{ textAlign: "left", marginTop: cornerLabel ? 22 : 12 }}>
         {loading ? (
           <Skeleton width="120px" />
         ) : error ? (
