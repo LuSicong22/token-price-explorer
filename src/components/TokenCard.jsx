@@ -34,9 +34,10 @@ export default function TokenCard({
       className="token-card"
       style={{
         width: 320,
-        height: 180,
+        height: 210,
         border: `1px solid ${labelColor}`,
         padding: 20,
+        paddingBottom: 28,
         borderRadius: 14,
         background: `linear-gradient(#ffffff,#ffffff) padding-box, linear-gradient(135deg, ${labelColor}, ${hexToRgba(labelColor, 0.6)}) border-box`,
         color: "#000000",
@@ -70,7 +71,11 @@ export default function TokenCard({
       {/* Content area */}
       <div style={{ textAlign: "left", marginTop: cornerLabel ? 22 : 12 }}>
         {loading ? (
-          <Skeleton width="120px" />
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            <Skeleton width="100%" height="32px" />
+            <div style={{ display: "flex", justifyContent: "center", color: "#666", fontSize: 14 }}>≈</div>
+            <Skeleton width="100%" height="32px" />
+          </div>
         ) : error ? (
           <p style={{ margin: 0, color: "red" }}>Error fetching price</p>
         ) : token ? (
