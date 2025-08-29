@@ -1,4 +1,4 @@
-# 🪙 Token Price Explorer
+# 🪙 CoinPeek
 
 A React + Vite app for exploring and converting between different cryptocurrency tokens with real-time pricing. Features a refined, Fun.xyz‑inspired minimalist design, responsive layout, and interactive token conversion cards.
 

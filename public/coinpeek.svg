@@ -1,0 +1,31 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="CoinPeek logo">
+  <defs>
+    <linearGradient id="gp" x1="64" y1="64" x2="448" y2="448" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#1976d2"/>
+      <stop offset="1" stop-color="#c2185b"/>
+    </linearGradient>
+    <linearGradient id="gl" x1="128" y1="160" x2="384" y2="352" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#90caf9"/>
+      <stop offset="1" stop-color="#f48fb1"/>
+    </linearGradient>
+    <filter id="s" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+
+  <!-- Rounded square background with brand gradient -->
+  <rect x="32" y="32" width="448" height="448" rx="112" fill="url(#gp)"/>
+
+  <!-- Eye outline (peek) -->
+  <path d="M96 256c40-64 112-104 160-104s120 40 160 104c-40 64-112 104-160 104S136 320 96 256z" fill="#fff" fill-opacity="0.95" filter="url(#s)"/>
+
+  <!-- Coin (inner circle) -->
+  <circle cx="256" cy="256" r="76" fill="url(#gl)"/>
+  <circle cx="256" cy="256" r="52" fill="#ffffff"/>
+  <circle cx="256" cy="256" r="22" fill="#0f172a"/>
+
+  <!-- Subtle gloss -->
+  <path d="M210 210c28-28 120-16 120-16-10-10-36-28-74-28-60 0-90 44-90 44 0 0 20-4 44 0z" fill="#fff" fill-opacity="0.18"/>
+</svg>
+
+

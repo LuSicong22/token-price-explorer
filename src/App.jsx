@@ -314,7 +314,8 @@ export default function App() {
         style={{
           width: "100%",
           maxWidth: 820,
-          background: "linear-gradient(#ffffff, #ffffff) padding-box, linear-gradient(135deg, #90caf9, #f48fb1) border-box",
+          background:
+            "linear-gradient(#ffffff, #ffffff) padding-box, linear-gradient(135deg, #90caf9, #f48fb1) border-box",
           padding: 32,
           borderRadius: 16,
           boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
@@ -333,10 +334,8 @@ export default function App() {
             letterSpacing: 0.2,
           }}
         >
-          <span className="gradient-text">Token Price Explorer</span>
+          <span className="gradient-text">CoinPeek</span>
         </h1>
-    
-
 
         <TokenSelector
           tokens={tokens}
